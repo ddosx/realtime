@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,700");
+
+
+.hehe-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: -99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.2s;
+    background: #31313a;
+    flex-direction: column;
+    gap: 10px;
+}
+.hehe-container.active {
+    z-index: 999999;
+    opacity: 1;
+    visibility: visible;
+}
+
+span.fromjs {
+  font-family: "Montserrat";
+//   text-transform: uppercase;
+  font-weight: bold;
+  font-size: 28px;
+  color: #fff;
+  letter-spacing: 10px;
+  animation: blurMe 1.4s ease-in-out forwards;
+  opacity: 0;
+}
+
+.inner-cursor {
+    z-index: 999999999999;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255,255,255,0.7);
+    filter: blur(0.1px);
+    padding: 1rem;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transform-origin: center;
+    transition: transform 250ms ease, left 60ms linear, top 60ms linear;
+    animation: revealCursor 0.2s ease 0.2s forwards;
+    opacity: 0.5;
+}
+
+span.fromjs.small {
+    font-size: 20px;
+}
+
+@keyframes blurMe {
+  0% {
+    filter: blur(10px);
+    opacity: 0;
+  }
+  100% {
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes revealCursor {
+  100% {
+    opacity: 1;
+  }
+}
