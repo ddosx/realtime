@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,700");
 @font-face {
   font-family: "newttf";
@@ -38,6 +39,7 @@ body, header {
 }
 
 .hehe-container {
+  text-align: center;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -57,6 +59,7 @@ body, header {
 }
 
 .hehe-container.active {
+  text-align: center;
   z-index: 999999;
   opacity: 1;
   visibility: visible;
@@ -109,6 +112,69 @@ span.fromjs.small {
   }
 }
 
+/* для элемента input c type="radio" */
+.custom-radio {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+
+/* для элемента label связанного с .custom-radio */
+.custom-radio + label {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* создание в label псевдоэлемента  before со следующими стилями */
+.custom-radio + label::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  flex-grow: 0;
+  border: 1px solid #adb5bd;
+  border-radius: 50%;
+  margin-right: 0.5em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+}
+
+/* стили при наведении курсора на радио */
+.custom-radio:not(:disabled):not(:checked) + label:hover::before {
+  border-color: #b3d7ff;
+}
+
+/* стили для активной радиокнопки (при нажатии на неё) */
+.custom-radio:not(:disabled):active + label::before {
+  background-color: #b3d7ff;
+  border-color: #b3d7ff;
+}
+
+/* стили для радиокнопки, находящейся в фокусе */
+.custom-radio:focus + label::before {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* стили для радиокнопки, находящейся в фокусе и не находящейся в состоянии checked */
+.custom-radio:focus:not(:checked) + label::before {
+  border-color: #80bdff;
+}
+
+/* стили для радиокнопки, находящейся в состоянии checked */
+.custom-radio:checked + label::before {
+  border-color: #0b76ef;
+  background-color: #0b76ef;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* стили для радиокнопки, находящейся в состоянии disabled */
+.custom-radio:disabled + label::before {
+  background-color: #e9ecef;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -120,15 +186,217 @@ body {
   user-select: none;
 }
 
+.settings-btn {
+  transition: 0.3s;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 15px;
+  right: 15px;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 100;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn .settings {
+  opacity: 0;
+}
+
+.settings-btn svg.x {
+  width: 25px;
+  height: 25px;
+  z-index: 25;
+}
+
+.settings-btn.active {
+  background: #161616;
+  border-radius: 10px;
+  top: 30%;
+  right: calc( 50% - 100px);
+  width: 100px;
+  height: 100px;
+  filter: blur(2px);
+}
+
+.settings-btn.active .settings {
+  opacity: 0.1;
+}
+
+.settings-btn.active svg.x {
+  top: calc( 50% - 25px);
+  right: calc( 50% - 25px);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.settings-btn.active2 {
+  background: #161616;
+  border-radius: 0%;
+  width: 100%;
+  height: 100%;
+  right: 0;
+  top: 0;
+  filter: blur(0px);
+}
+
+.settings-btn.active2 .settings {
+  opacity: 1;
+}
+
+.settings-btn.active2 svg.x {
+  opacity: 0;
+  visibility: hidden;
+  display: none;
+  z-index: -9999999;
+}
+
+.settings {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.settings .main {
+  width: calc( 100% - 300px);
+  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  padding: 20px;
+}
+
+@media screen and (max-width: 540px) {
+  .settings .main {
+    width: 0%;
+    right: -50px;
+    overflow: hidden;
+  }
+}
+
+.settings .main div .return-set {
+  display: none;
+}
+
+@media screen and (max-width: 540px) {
+  .settings .main div .return-set {
+    display: block;
+  }
+}
+
+.settings .main div .title-set {
+  width: 100%;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  margin: 15px auto;
+  justify-content: center;
+  padding: 10px;
+}
+
+.settings .main div .ctn-set {
+  font-size: 20px;
+}
+
+.settings .main div .ctn-set .radio {
+  margin-top: 10px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings .main div.s-close {
+  overflow: hidden;
+  height: 0px;
+}
+
+@media screen and (max-width: 540px) {
+  .settings .main.active {
+    width: 100%;
+    right: 0;
+    background: #161616;
+  }
+}
+
+.settings .aside {
+  width: 300px;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: #303030;
+  position: absolute;
+}
+
+@media screen and (max-width: 540px) {
+  .settings .aside {
+    width: 100%;
+  }
+}
+
+.settings .aside .ml {
+  width: 100%;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  margin: 15px auto;
+  justify-content: center;
+  padding: 10px;
+}
+
+.settings .aside .label {
+  transition: 0.4s;
+  margin: 15px auto;
+  padding: 10px;
+  display: flex;
+  width: 90%;
+  height: 50px;
+  background: #4e4e4e;
+  border-radius: 10px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.settings .aside .label svg {
+  margin-right: 10px;
+}
+
+.settings .aside .label .accyracysvg {
+  margin-top: 6px;
+}
+
+.settings .closeline {
+  position: fixed;
+  bottom: 5px;
+  left: calc( 50% - 75px);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  bottom: 10px;
+  width: 150px;
+  height: 8px;
+}
+
 main {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.5s;
 }
 
 main .timer {
+  transition: 0.2s;
   display: flex;
   width: 325px;
   height: 45px;
@@ -149,4 +417,19 @@ main .timer .dt {
 
 .dtms, .ms {
   opacity: 0.7;
+}
+
+.blur {
+  filter: blur(2px);
+  transform: scale(0.8) translateX(30px) translateY(-30px);
+  overflow: hidden !important;
+  max-width: 100%;
+}
+
+#appt {
+  background: #161616;
+  color: #fff;
+  outline: 1px solid #0e78ef;
+  border: none;
+  border-radius: 10px;
 }

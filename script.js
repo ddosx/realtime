@@ -6,9 +6,40 @@ const
     s2   = document.querySelector('.s-2');
     ms   = document.querySelector('.ms');
     msgc = document.querySelector('.hehe-container');
-    hehe24 = document.querySelector("body > main > div > div.h > div")
+    hehe24 = document.querySelector("body > main > div > div.h > div.hehe24");
+    settingsbtn = document.querySelector('.settings-btn');
+    labels = document.querySelectorAll('.label');
+    qm = document.querySelector('.qm');
+    rs = document.querySelectorAll('.return-set');
 
 let hehe = false;
+let timer_int = ``;
+let twth = false;
+
+function save() {
+    localStorage['s'] = JSON.stringify({'12':twth});
+};
+
+function load() {
+    let data;
+    if (localStorage['s']) {
+        data = JSON.parse(localStorage['s']);
+    } else {
+        data = {12:false};
+    };
+
+    if (data[12] == true) {
+        document.querySelector('#sys-12').checked = true;
+        document.querySelector('#sys-24').checked = false;
+    } else {
+        document.querySelector('#sys-24').checked = true;
+        document.querySelector('#sys-12').checked = false;
+    }
+
+    twth = data[12];
+}
+
+load()
 
 async function setH(time) {
 
@@ -91,7 +122,7 @@ function hehe_f() {
 
 async function qmsg(usermsg,usermsg2) {
     let msgx = usermsg.split("");
-    let ctn  = `<div>`
+    let ctn  = `<div style="text-align: center">`
     let aoffset = 0
     for (i in msgx) {
         let q = msgx[i];
@@ -127,24 +158,38 @@ async function showDate(date) {
 let first = false;
 async function set() {
     sH()
+
+
     let date = new Date();
     let h = date.getHours();
     let m = date.getMinutes();
     let s = date.getSeconds();
+
+    let dd = ``;
+
+    if (twth) {
+        hehe = false;
+        document.querySelector('.heh').classList.add('op0');
+        dd = 'AM';
+        if (h => 12) {
+            h -= 12;
+            dd = 'PM';
+        };
+    } else {document.querySelector('.heh').classList.remove('op0');}
+
     if (hehe && 10 >= (h*3600+m*60+s)) {setH(24);} else {setH(h);};
     setM(m);
     setS(s);
     if (hehe) {
         if (hehe24.classList.contains('op0')) {hehe24.classList.remove('op0')}
     } else {if (!hehe24.classList.contains('op0')) {hehe24.classList.add('op0')}}
-    ms.innerHTML = msPre(date.getMilliseconds());
+    ms.innerHTML = msPre(date.getMilliseconds())+' '+dd;
     if ( ((24*60*60)-(h*3600+m*60+s)) == 1 && !first) {
         hsH();
-        if (hehe) {hehe_f();} else {qmsg(new Date().toLocaleDateString("ru-RU"),new Date().toString().split(" ")[0]+' '+new Date().toString().split(" ")[1]) };
+        if (hehe) {hehe_f();} else {showDate(nextDay());};
         first = true;
     } else if ((24*60*60)-(h*3600+m*60+s) != 1 || (24*60*60)-(h*3600+m*60+s) != 0 && first) {first = false;};
 }
-setInterval(() => {set()}, 12);
 
 msgc.addEventListener('click',function (e) {
     hideMsg(e.target);
@@ -169,3 +214,153 @@ function hideMsg(e) {
         e.classList.remove('active');
     };
 }
+
+async function openmenu() {
+    qm.classList.remove('active');
+    if (settingsbtn.classList.contains('active')) {
+        setTimeout(() => {settingsbtn.classList.toggle('active2');}, 10);
+        setTimeout(() => {settingsbtn.classList.toggle('active');}, 150);
+        setTimeout(() => {document.querySelector('main').classList.toggle('blur');}, 200);
+    } else {
+        setTimeout(() => {settingsbtn.classList.toggle('active');document.querySelector('main').classList.toggle('blur');}, 10);
+        setTimeout(() => {settingsbtn.classList.toggle('active2');}, 150);
+    };
+};
+
+
+async function timeIO() {
+    clearInterval(timer_int);
+    timer_int = setInterval(() => {set()}, 12);
+};
+
+function timerIO(endTime) {
+    hehe = false;
+    hehe24.classList.add('op0');
+    document.querySelector('.heh').classList.remove('op0');
+    clearInterval(timer_int);
+    let diffTime; // Difference time 
+    timer_int = setInterval(function() {
+        let currentTime = new Date(); // Take actual time 
+        diffTime = endTime - currentTime; // Calculate how much time left 
+        let hours = Math.floor(diffTime / (1000 * 60 * 60)) % 24; // Calculate hours 
+        let minutes = Math.floor(diffTime / (1000 * 60)) % 60; // Calculate minutes
+        let seconds = Math.floor(diffTime / 1000) % 60; // Calculate seconds
+        let xms = diffTime % 1000; // Calculate milliseconds 
+        setS(seconds);
+        setM(minutes);
+        setH(hours);
+        if (0 > xms) {console.log('False');clearInterval(timer_int);qmsg('Время вышло!');timeIO()};
+        ms.innerHTML = msPre(xms);
+    },12);
+}
+
+function sIO() {
+    hehe = false;
+    hehe24.classList.add('op0');
+    document.querySelector('.heh').classList.remove('op0');
+    clearInterval(timer_int);
+    let xms = 0;
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+
+    setS(seconds);
+    setM(minutes);
+    setH(hours);
+
+    let startTime = Date.now();
+
+    timer_int = setInterval(() => {
+        let now = Date.now() - startTime;
+        xms = now%1000;
+        seconds = Math.floor(now/1000)%60;
+        minutes = Math.floor((now/1000)/60)%60;
+        hours = Math.floor(((now/1000)/60)/60);
+        setS(seconds);
+        setM(minutes);
+        setH(hours);
+        ms.innerHTML = msPre(xms);
+    }, 1);
+}
+
+function addTimeToDate(hours, minutes, seconds) {
+    let timeInMillis = Date.now() + (1000 * 60 * 60 * hours) + (1000 * 60 * minutes) + (1000 * seconds);
+    return new Date(timeInMillis);
+}
+document.querySelector('.closeline').addEventListener("click",function () {
+    if (settingsbtn.classList.contains('active')) {openmenu();};
+});
+
+document.querySelector('#mode-clock').addEventListener(`change`,function (e) {
+    if (e.target.checked) {timeIO();};
+})
+document.querySelector('#mode-timer').addEventListener(`change`,function (e) {
+    if (e.target.checked) {
+
+        let v = document.querySelector('#appt').value;
+        let x = v.split(":");
+
+
+        if (isNaN(Number(x[2])) || isNaN(Number(x[1])) || isNaN(Number(x[0])) ) {
+            qmsg('По человечески написали введи время. Но нет, ты его не ввёл...');
+            document.querySelector('#mode-clock').checked = true;
+            document.querySelector('#mode-secundomer').checked = false;
+            document.querySelector('#mode-timer').checked = false;
+        } else {
+            timerIO(addTimeToDate(Number(x[0]),Number(x[1]),Number(x[2])));
+            openmenu();
+            qmsg(`Таймер запущен`,`на ${v}`)
+        }
+    }
+})
+
+document.querySelector('#mode-secundomer').addEventListener(`change`,function (e) {
+    if (e.target.checked) {sIO();};
+})
+
+document.querySelector('#mode-clock').checked = true;
+document.querySelector('#mode-secundomer').checked = false;
+document.querySelector('#mode-timer').checked = false;
+
+document.querySelector('#sys-12').addEventListener('change',function (e) {
+    if (e.target.checked){
+        twth = true;
+        save();
+    }  
+})
+document.querySelector('#sys-24').addEventListener('change',function (e) {
+    if (e.target.checked){
+        twth = false;
+        save();
+    }
+})
+
+
+let alll = []
+
+for (let i = 0;i<(labels.length-1);i++) {
+
+    alll.push(labels[i].getAttribute('data-set'))
+
+    labels[i].addEventListener('click',function (e) {
+        document.querySelector('.welcome-set').classList.add('s-close');
+        for (let j = 0;j<alll.length;j++) {
+            document.querySelector(alll[j]).classList.add('s-close');
+        };
+        document.querySelector(e.target.getAttribute('data-set')).classList.remove('s-close');
+        qm.classList.add('active');
+    })
+}
+
+for (let i = 0;i<rs.length;i++) {
+    rs[i].addEventListener(`click`,function () {
+        qm.classList.remove('active')
+    })
+}
+
+document.querySelector('#hehehehe').addEventListener('click',function (e) {
+    hehe = e.target.checked;
+    openmenu();
+});
+
+timeIO();
